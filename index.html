@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gas Cylinder Inventory Dashboard</title>
+  <title>Shared Gas Cylinder Inventory</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -34,10 +34,8 @@
       min-height: 100%;
     }
 
-    a { color: inherit; text-decoration: none; }
-
     .container {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
       padding: 24px;
     }
@@ -75,7 +73,7 @@
 
     .subtext {
       color: var(--muted);
-      max-width: 780px;
+      max-width: 850px;
       margin-top: 10px;
       line-height: 1.5;
     }
@@ -115,13 +113,19 @@
       font-size: 13px;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+    .button.danger {
+      border-color: rgba(239, 68, 68, 0.25);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.18), rgba(127, 29, 29, 0.22));
     }
 
+    .status-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .status-box,
     .card {
       background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(17, 24, 39, 0.84));
       border: 1px solid var(--border);
@@ -131,16 +135,25 @@
       backdrop-filter: blur(12px);
     }
 
+    .status-label,
     .stat-label {
       color: var(--muted);
       font-size: 14px;
       margin-bottom: 8px;
     }
 
+    .status-value,
     .stat-value {
-      font-size: 34px;
+      font-size: 28px;
       font-weight: 800;
       margin-bottom: 6px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .tabs {
@@ -192,6 +205,7 @@
       color: var(--muted);
       font-size: 14px;
       margin: 0 0 18px;
+      line-height: 1.5;
     }
 
     .stock-row { margin-bottom: 18px; }
@@ -210,9 +224,15 @@
       margin-bottom: 4px;
     }
 
-    .stock-meta {
+    .stock-meta,
+    .mono {
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      word-break: break-all;
     }
 
     .badge {
@@ -271,7 +291,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.2fr 0.6fr 0.6fr auto;
+      grid-template-columns: 1.2fr 0.6fr 0.6fr auto auto;
       gap: 12px;
       margin-bottom: 16px;
       align-items: center;
@@ -299,7 +319,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1160px;
+      min-width: 1240px;
     }
 
     thead {
@@ -359,6 +379,27 @@
       flex-wrap: wrap;
     }
 
+    .setup-card {
+      margin-bottom: 20px;
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      background: linear-gradient(180deg, rgba(120, 53, 15, 0.22), rgba(15, 23, 42, 0.86));
+      display: none;
+    }
+
+    .setup-card.show { display: block; }
+
+    pre {
+      white-space: pre-wrap;
+      background: rgba(2, 6, 23, 0.72);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      overflow-x: auto;
+      color: #dbeafe;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .toast {
       position: fixed;
       right: 18px;
@@ -383,13 +424,14 @@
       transform: translateY(0);
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1180px) {
       .stats,
       .grid-2,
-      .grid-2-equal { grid-template-columns: 1fr; }
+      .grid-2-equal,
+      .status-bar { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .toolbar { grid-template-columns: 1fr; }
     }
 
@@ -409,18 +451,51 @@
 </head>
 <body>
   <div class="container">
+    <div class="card setup-card" id="setupCard">
+      <h2 class="section-title">Setup needed before cloud sync works</h2>
+      <p class="section-desc">
+        Replace the Firebase config placeholder values in this file with your real project keys, then deploy again. After that, all users on the site will see the same shared inventory in real time.
+      </p>
+      <pre>const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};</pre>
+    </div>
+
     <div class="header">
       <div>
-        <div class="eyebrow">Gas Cylinder Inventory</div>
-        <h1>Cylinder Stock Dashboard</h1>
+        <div class="eyebrow">Cloud-Synced Gas Cylinder Inventory</div>
+        <h1>Shared Cylinder Stock Dashboard</h1>
         <p class="subtext">
-          A simple browser-based inventory app to track full and empty gas cylinders, refill workflow, safety holds, inspections, and movement history.
+          This version stores inventory online with Firebase, so multiple people can use the same live cylinder list, movement log, and alerts from different devices.
         </p>
       </div>
 
       <div class="actions">
         <button class="button" onclick="checkOutCylinder()">Check Out Cylinder</button>
         <button class="button primary" onclick="addCylinder()">Add Cylinder</button>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-box">
+        <div class="status-label">Cloud Status</div>
+        <div class="status-value" id="cloudStatus">Waiting</div>
+        <div class="stock-meta" id="cloudStatusNote">App not connected yet.</div>
+      </div>
+      <div class="status-box">
+        <div class="status-label">Signed-In Session</div>
+        <div class="status-value" id="userStatus">Not signed in</div>
+        <div class="mono" id="userStatusNote">—</div>
+      </div>
+      <div class="status-box">
+        <div class="status-label">Live Inventory</div>
+        <div class="status-value" id="liveInventoryCount">0</div>
+        <div class="stock-meta">Records shared across connected users.</div>
       </div>
     </div>
 
@@ -464,7 +539,7 @@
 
         <div class="card">
           <h2 class="section-title">Recent Movement</h2>
-          <p class="section-desc">Latest inventory activity across your locations.</p>
+          <p class="section-desc">Latest inventory activity across all connected users.</p>
           <div id="movementPreview"></div>
         </div>
       </div>
@@ -495,7 +570,8 @@
             <option value="In Transit">In Transit</option>
             <option value="Quarantined">Quarantined</option>
           </select>
-          <button class="button small" onclick="resetDemoData()">Reset Demo Data</button>
+          <button class="button small" onclick="seedDemoData()">Load Demo Data</button>
+          <button class="button small danger" onclick="clearAllCloudData()">Clear Cloud Data</button>
         </div>
 
         <div class="table-wrap">
@@ -518,7 +594,7 @@
           </table>
         </div>
         <div class="footer-note">
-          This version now performs simple working actions inside the browser and saves changes with local storage. It does not use a real server or shared database yet.
+          This version writes directly to Firebase Cloud Firestore. When one person changes a cylinder, everyone connected to the app should see the update within moments.
         </div>
       </div>
     </div>
@@ -538,11 +614,48 @@
 
   <div class="toast" id="toast"></div>
 
-  <script>
-    const STORAGE_KEYS = {
-      cylinders: 'gasCylinderInventory_cylinders',
-      movements: 'gasCylinderInventory_movements'
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      addDoc,
+      serverTimestamp,
+      query,
+      orderBy,
+      limit,
+      onSnapshot,
+      getDocs,
+      writeBatch
+    } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: 'YOUR_API_KEY',
+      authDomain: 'YOUR_PROJECT.firebaseapp.com',
+      projectId: 'YOUR_PROJECT_ID',
+      storageBucket: 'YOUR_PROJECT.firebasestorage.app',
+      messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+      appId: 'YOUR_APP_ID'
     };
+
+    const setupCard = document.getElementById('setupCard');
+    const searchInput = document.getElementById('searchInput');
+    const gasFilter = document.getElementById('gasFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const toast = document.getElementById('toast');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    const cloudStatus = document.getElementById('cloudStatus');
+    const cloudStatusNote = document.getElementById('cloudStatusNote');
+    const userStatus = document.getElementById('userStatus');
+    const userStatusNote = document.getElementById('userStatusNote');
+    const liveInventoryCount = document.getElementById('liveInventoryCount');
 
     const defaultCylinders = [
       { id: 'OX-1001', gas: 'Oxygen', size: '250cf', status: 'Full', location: 'Main Cage', owner: 'In-House', lastFill: '2026-03-24', inspectionDue: '2026-07-10', assignedTo: '', pressure: 'High' },
@@ -556,36 +669,36 @@
     ];
 
     const defaultMovements = [
-      { time: '08:14', date: '2026-03-28', action: 'Checked Out', cylinder: 'NI-5521', from: 'Warehouse', to: 'Delivery Truck 1', user: 'J. Carter' },
-      { time: '09:02', date: '2026-03-28', action: 'Marked Empty', cylinder: 'HE-9944', from: 'Event Team', to: 'Return Staging', user: 'A. Lewis' },
-      { time: '10:20', date: '2026-03-28', action: 'Received Full', cylinder: 'CO2-889', from: 'Vendor', to: 'Warehouse Bay 2', user: 'R. Hall' },
-      { time: '11:11', date: '2026-03-28', action: 'Quarantined', cylinder: 'AC-7710', from: 'Dock', to: 'Safety Hold', user: 'S. Grant' },
-      { time: '13:44', date: '2026-03-28', action: 'Moved', cylinder: 'AR-2033', from: 'Return Staging', to: 'Refill Area', user: 'J. Carter' }
+      { action: 'Checked Out', cylinder: 'NI-5521', from: 'Warehouse', to: 'Delivery Truck 1', user: 'Demo User', date: '2026-03-28', time: '08:14' },
+      { action: 'Marked Empty', cylinder: 'HE-9944', from: 'Event Team', to: 'Return Staging', user: 'Demo User', date: '2026-03-28', time: '09:02' },
+      { action: 'Received Full', cylinder: 'CO2-889', from: 'Vendor', to: 'Warehouse Bay 2', user: 'Demo User', date: '2026-03-28', time: '10:20' },
+      { action: 'Quarantined', cylinder: 'AC-7710', from: 'Dock', to: 'Safety Hold', user: 'Demo User', date: '2026-03-28', time: '11:11' },
+      { action: 'Moved', cylinder: 'AR-2033', from: 'Return Staging', to: 'Refill Area', user: 'Demo User', date: '2026-03-28', time: '13:44' }
     ];
 
-    let cylinders = loadData(STORAGE_KEYS.cylinders, defaultCylinders);
-    let movementLog = loadData(STORAGE_KEYS.movements, defaultMovements);
+    let app = null;
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let cylinders = [];
+    let movementLog = [];
+    let inventoryUnsub = null;
+    let movementUnsub = null;
 
-    const tabs = document.querySelectorAll('.tab-btn');
-    const panels = document.querySelectorAll('.tab-panel');
-    const searchInput = document.getElementById('searchInput');
-    const gasFilter = document.getElementById('gasFilter');
-    const statusFilter = document.getElementById('statusFilter');
-    const toast = document.getElementById('toast');
-
-    function loadData(key, fallback) {
-      const saved = localStorage.getItem(key);
-      if (!saved) return JSON.parse(JSON.stringify(fallback));
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return JSON.parse(JSON.stringify(fallback));
-      }
+    function isConfigured() {
+      return !Object.values(firebaseConfig).some(value => String(value).includes('YOUR_'));
     }
 
-    function saveData() {
-      localStorage.setItem(STORAGE_KEYS.cylinders, JSON.stringify(cylinders));
-      localStorage.setItem(STORAGE_KEYS.movements, JSON.stringify(movementLog));
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    function setCloudStatus(title, note) {
+      cloudStatus.textContent = title;
+      cloudStatusNote.textContent = note;
     }
 
     function todayDate() {
@@ -596,11 +709,12 @@
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200);
+    function currentUserLabel() {
+      return currentUser?.isAnonymous ? 'Anonymous User' : 'Signed In';
+    }
+
+    function currentActor() {
+      return currentUser?.uid ? `${currentUserLabel()} (${currentUser.uid.slice(0, 8)})` : 'Unknown User';
     }
 
     function getStatusClass(status) {
@@ -611,54 +725,19 @@
       return 'status-quarantined';
     }
 
-    function logMovement(action, cylinderId, from, to, user = 'Local User') {
-      movementLog.unshift({
-        time: currentTime(),
-        date: todayDate(),
-        action,
-        cylinder: cylinderId,
-        from: from || '—',
-        to: to || '—',
-        user
-      });
-      movementLog = movementLog.slice(0, 50);
-    }
-
     function getCylinderById(id) {
-      return cylinders.find(c => c.id.toLowerCase() === id.toLowerCase());
+      return cylinders.find(c => c.id.toLowerCase() === String(id).toLowerCase());
     }
 
-    function refreshAll() {
-      saveData();
-      renderStats();
-      renderStockLevels();
-      renderAlertPreview();
-      renderMovementPreview();
-      renderMovementLog();
-      renderInventory();
-    }
-
-    function renderStats() {
-      const total = cylinders.length;
-      const full = cylinders.filter(c => c.status === 'Full').length;
-      const empty = cylinders.filter(c => c.status === 'Empty').length;
-      const transit = cylinders.filter(c => c.status === 'In Transit').length;
-      const attention = cylinders.filter(c => c.status === 'Partial' || c.status === 'Quarantined').length;
-
-      const items = [
-        { label: 'Total Cylinders', value: total, note: 'All active assets' },
-        { label: 'Full Cylinders', value: full, note: 'Ready for issue' },
-        { label: 'Empty Cylinders', value: empty, note: 'Awaiting refill or pickup' },
-        { label: 'Needs Attention', value: attention, note: 'Partial or quarantined' }
-      ];
-
-      document.getElementById('stats').innerHTML = items.map(item => `
-        <div class="card">
-          <div class="stat-label">${item.label}</div>
-          <div class="stat-value">${item.value}</div>
-          <div class="stock-meta">${item.note}</div>
-        </div>
-      `).join('');
+    function setupTabs() {
+      tabs.forEach(button => {
+        button.addEventListener('click', () => {
+          tabs.forEach(btn => btn.classList.remove('active'));
+          panels.forEach(panel => panel.classList.remove('active'));
+          button.classList.add('active');
+          document.getElementById(button.dataset.tab).classList.add('active');
+        });
+      });
     }
 
     function buildStockByGas() {
@@ -682,7 +761,7 @@
         }));
 
       const inspectionAlerts = cylinders
-        .filter(c => c.inspectionDue <= '2026-04-15')
+        .filter(c => c.inspectionDue && c.inspectionDue <= '2026-04-15')
         .map(c => ({
           title: 'Inspection due soon',
           detail: `${c.gas} cylinder ${c.id} inspection due on ${c.inspectionDue}.`,
@@ -702,6 +781,30 @@
       return [...stockAlerts, ...inspectionAlerts, ...refillAlert, ...quarantineAlert].slice(0, 8);
     }
 
+    function renderStats() {
+      const total = cylinders.length;
+      const full = cylinders.filter(c => c.status === 'Full').length;
+      const empty = cylinders.filter(c => c.status === 'Empty').length;
+      const transit = cylinders.filter(c => c.status === 'In Transit').length;
+      const attention = cylinders.filter(c => c.status === 'Partial' || c.status === 'Quarantined').length;
+      liveInventoryCount.textContent = String(total);
+
+      const items = [
+        { label: 'Total Cylinders', value: total, note: 'All active shared records' },
+        { label: 'Full Cylinders', value: full, note: 'Ready for issue' },
+        { label: 'Empty Cylinders', value: empty, note: 'Awaiting refill or pickup' },
+        { label: 'Needs Attention', value: attention, note: 'Partial or quarantined' }
+      ];
+
+      document.getElementById('stats').innerHTML = items.map(item => `
+        <div class="card">
+          <div class="stat-label">${item.label}</div>
+          <div class="stat-value">${item.value}</div>
+          <div class="stock-meta">${item.note}</div>
+        </div>
+      `).join('');
+    }
+
     function renderStockLevels() {
       const stockByGas = buildStockByGas();
       document.getElementById('stockLevels').innerHTML = stockByGas.map(item => {
@@ -719,7 +822,7 @@
             <div class="progress"><span style="width:${pct}%"></span></div>
           </div>
         `;
-      }).join('') || '<div class="stock-meta">No stock data available.</div>';
+      }).join('') || '<div class="stock-meta">No stock data available yet.</div>';
     }
 
     function renderAlertPreview() {
@@ -748,8 +851,8 @@
             <div class="movement-meta">${log.from} → ${log.to}</div>
           </div>
           <div class="movement-meta" style="text-align:right;">
-            <div>${log.time}</div>
-            <div>${log.user}</div>
+            <div>${log.time || '—'}</div>
+            <div>${log.user || '—'}</div>
           </div>
         </div>
       `).join('') || '<div class="movement-item"><div class="movement-meta">No recent activity.</div></div>';
@@ -763,8 +866,8 @@
             <div class="movement-meta">Cylinder ${log.cylinder}</div>
           </div>
           <div class="movement-meta">${log.from} → ${log.to}</div>
-          <div class="movement-meta">${log.user}</div>
-          <span class="badge info">${log.time}</span>
+          <div class="movement-meta">${log.user || '—'}</div>
+          <span class="badge info">${log.time || '—'}</span>
         </div>
       `).join('') || '<div class="movement-item"><div class="movement-meta">No logged movements yet.</div></div>';
     }
@@ -790,9 +893,9 @@
           <td><span class="status-pill ${getStatusClass(c.status)}">${c.status}</span></td>
           <td>${c.location}</td>
           <td>${c.assignedTo || '—'}</td>
-          <td>${c.lastFill}</td>
-          <td>${c.inspectionDue}</td>
-          <td>${c.pressure}</td>
+          <td>${c.lastFill || '—'}</td>
+          <td>${c.inspectionDue || '—'}</td>
+          <td>${c.pressure || '—'}</td>
           <td>
             <div class="actions-cell">
               <button class="button small" onclick="markFull('${c.id}')">Mark Full</button>
@@ -808,18 +911,40 @@
       `;
     }
 
-    function setupTabs() {
-      tabs.forEach(button => {
-        button.addEventListener('click', () => {
-          tabs.forEach(btn => btn.classList.remove('active'));
-          panels.forEach(panel => panel.classList.remove('active'));
-          button.classList.add('active');
-          document.getElementById(button.dataset.tab).classList.add('active');
-        });
+    function refreshAll() {
+      renderStats();
+      renderStockLevels();
+      renderAlertPreview();
+      renderMovementPreview();
+      renderMovementLog();
+      renderInventory();
+    }
+
+    async function logMovement(action, cylinderId, from, to) {
+      if (!db) throw new Error('Database not ready');
+      await addDoc(collection(db, 'movements'), {
+        action,
+        cylinder: cylinderId,
+        from: from || '—',
+        to: to || '—',
+        user: currentActor(),
+        date: todayDate(),
+        time: currentTime(),
+        createdAt: serverTimestamp(),
+        createdBy: currentUser?.uid || null
       });
     }
 
-    function addCylinder() {
+    async function upsertCylinder(cylinder) {
+      await setDoc(doc(db, 'cylinders', cylinder.id), {
+        ...cylinder,
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUser?.uid || null
+      }, { merge: true });
+    }
+
+    async function addCylinder() {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const id = prompt('Cylinder ID? Example: OX-1010');
       if (!id) return;
       if (getCylinderById(id)) {
@@ -831,24 +956,29 @@
       const location = prompt('Current location?') || 'Main Cage';
       const inspectionDue = prompt('Inspection due date? Use YYYY-MM-DD') || todayDate();
 
-      cylinders.unshift({
-        id,
-        gas,
-        size,
-        status: 'Full',
-        location,
-        owner: 'In-House',
-        lastFill: todayDate(),
-        inspectionDue,
-        assignedTo: '',
-        pressure: 'High'
-      });
-      logMovement('Added', id, '—', location);
-      refreshAll();
-      showToast(`Cylinder ${id} added.`);
+      try {
+        await upsertCylinder({
+          id,
+          gas,
+          size,
+          status: 'Full',
+          location,
+          owner: 'In-House',
+          lastFill: todayDate(),
+          inspectionDue,
+          assignedTo: '',
+          pressure: 'High'
+        });
+        await logMovement('Added', id, '—', location);
+        showToast(`Cylinder ${id} added to cloud inventory.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not add cylinder.');
+      }
     }
 
-    function checkOutCylinder(preselectedId) {
+    async function checkOutCylinder(preselectedId) {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const id = preselectedId || prompt('Enter the cylinder ID to check out:');
       if (!id) return;
       const cylinder = getCylinderById(id);
@@ -860,76 +990,106 @@
       if (assignedTo === null) return;
       const newLocation = prompt('New location for this checkout:', cylinder.location || 'Delivery Truck 1');
       if (newLocation === null) return;
-      const from = cylinder.location;
-      cylinder.assignedTo = assignedTo;
-      cylinder.location = newLocation;
-      cylinder.status = 'In Transit';
-      cylinder.pressure = cylinder.status === 'Empty' ? 'Low' : cylinder.pressure;
-      logMovement('Checked Out', cylinder.id, from, newLocation);
-      refreshAll();
-      showToast(`Cylinder ${cylinder.id} checked out.`);
+
+      const updated = {
+        ...cylinder,
+        assignedTo,
+        location: newLocation,
+        status: 'In Transit'
+      };
+
+      try {
+        await upsertCylinder(updated);
+        await logMovement('Checked Out', cylinder.id, cylinder.location, newLocation);
+        showToast(`Cylinder ${cylinder.id} checked out.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not check out cylinder.');
+      }
     }
 
-    function markEmpty(id) {
+    async function markEmpty(id) {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const cylinder = getCylinderById(id);
       if (!cylinder) return showToast('Cylinder not found.');
-      const from = cylinder.location;
-      cylinder.status = 'Empty';
-      cylinder.pressure = 'Low';
-      cylinder.location = 'Return Staging';
-      logMovement('Marked Empty', cylinder.id, from, cylinder.location);
-      refreshAll();
-      showToast(`${cylinder.id} marked empty.`);
+      const updated = {
+        ...cylinder,
+        status: 'Empty',
+        pressure: 'Low',
+        location: 'Return Staging'
+      };
+      try {
+        await upsertCylinder(updated);
+        await logMovement('Marked Empty', cylinder.id, cylinder.location, updated.location);
+        showToast(`${cylinder.id} marked empty.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not update cylinder.');
+      }
     }
 
-    function markFull(id) {
+    async function markFull(id) {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const cylinder = getCylinderById(id);
       if (!cylinder) return showToast('Cylinder not found.');
-      const from = cylinder.location;
-      cylinder.status = 'Full';
-      cylinder.pressure = 'High';
-      cylinder.location = 'Main Cage';
-      cylinder.lastFill = todayDate();
-      cylinder.assignedTo = '';
-      logMovement('Marked Full', cylinder.id, from, cylinder.location);
-      refreshAll();
-      showToast(`${cylinder.id} marked full.`);
+      const updated = {
+        ...cylinder,
+        status: 'Full',
+        pressure: 'High',
+        location: 'Main Cage',
+        assignedTo: '',
+        lastFill: todayDate()
+      };
+      try {
+        await upsertCylinder(updated);
+        await logMovement('Marked Full', cylinder.id, cylinder.location, updated.location);
+        showToast(`${cylinder.id} marked full.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not update cylinder.');
+      }
     }
 
-    function markReturnedEmpty() {
+    async function markReturnedEmpty() {
       const id = prompt('Cylinder ID to mark as returned empty:');
       if (!id) return;
-      markEmpty(id);
+      await markEmpty(id);
     }
 
-    function receiveFullCylinders() {
+    async function receiveFullCylinders() {
       const id = prompt('Cylinder ID received as full:');
       if (!id) return;
       const cylinder = getCylinderById(id);
       if (!cylinder) {
         const createNew = confirm('Cylinder not found. Add it as a new cylinder?');
-        if (createNew) addCylinder();
+        if (createNew) await addCylinder();
         return;
       }
-      markFull(id);
+      await markFull(id);
     }
 
-    function sendBatchForRefill() {
+    async function sendBatchForRefill() {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const empties = cylinders.filter(c => c.status === 'Empty');
       if (empties.length === 0) {
         showToast('No empty cylinders available for refill.');
         return;
       }
-      empties.forEach(cylinder => {
-        const from = cylinder.location;
-        cylinder.location = 'Refill Area';
-        logMovement('Sent For Refill', cylinder.id, from, cylinder.location);
-      });
-      refreshAll();
-      showToast(`${empties.length} empty cylinders sent for refill.`);
+
+      try {
+        for (const cylinder of empties) {
+          await upsertCylinder({ ...cylinder, location: 'Refill Area' });
+          await logMovement('Sent For Refill', cylinder.id, cylinder.location, 'Refill Area');
+        }
+        showToast(`${empties.length} empty cylinders sent for refill.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not send batch for refill.');
+      }
     }
 
-    function transferBetweenLocations() {
+    async function transferBetweenLocations() {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const id = prompt('Cylinder ID to transfer:');
       if (!id) return;
       const cylinder = getCylinderById(id);
@@ -939,14 +1099,19 @@
       }
       const newLocation = prompt('Move cylinder to which location?', cylinder.location);
       if (!newLocation) return;
-      const from = cylinder.location;
-      cylinder.location = newLocation;
-      logMovement('Moved', cylinder.id, from, newLocation);
-      refreshAll();
-      showToast(`${cylinder.id} moved to ${newLocation}.`);
+
+      try {
+        await upsertCylinder({ ...cylinder, location: newLocation });
+        await logMovement('Moved', cylinder.id, cylinder.location, newLocation);
+        showToast(`${cylinder.id} moved to ${newLocation}.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not transfer cylinder.');
+      }
     }
 
-    function quarantineDamagedCylinder() {
+    async function quarantineDamagedCylinder() {
+      if (!db) return showToast('Cloud database is not ready yet.');
       const id = prompt('Cylinder ID to quarantine:');
       if (!id) return;
       const cylinder = getCylinderById(id);
@@ -954,21 +1119,118 @@
         showToast('Cylinder not found.');
         return;
       }
-      const from = cylinder.location;
-      cylinder.status = 'Quarantined';
-      cylinder.location = 'Safety Hold';
-      cylinder.pressure = 'Unknown';
-      logMovement('Quarantined', cylinder.id, from, cylinder.location);
-      refreshAll();
-      showToast(`${cylinder.id} moved to safety hold.`);
+
+      try {
+        await upsertCylinder({ ...cylinder, status: 'Quarantined', location: 'Safety Hold', pressure: 'Unknown' });
+        await logMovement('Quarantined', cylinder.id, cylinder.location, 'Safety Hold');
+        showToast(`${cylinder.id} moved to safety hold.`);
+      } catch (error) {
+        console.error(error);
+        showToast('Could not quarantine cylinder.');
+      }
     }
 
-    function resetDemoData() {
-      if (!confirm('Reset all saved changes and restore the original demo data?')) return;
-      cylinders = JSON.parse(JSON.stringify(defaultCylinders));
-      movementLog = JSON.parse(JSON.stringify(defaultMovements));
-      refreshAll();
-      showToast('Demo data reset.');
+    async function seedDemoData() {
+      if (!db) return showToast('Cloud database is not ready yet.');
+      const confirmed = confirm('Load demo cylinders into the shared cloud inventory? Existing matching IDs will be overwritten.');
+      if (!confirmed) return;
+
+      try {
+        for (const cylinder of defaultCylinders) {
+          await upsertCylinder(cylinder);
+        }
+        for (const move of defaultMovements) {
+          await addDoc(collection(db, 'movements'), {
+            ...move,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser?.uid || null
+          });
+        }
+        showToast('Demo data loaded into cloud inventory.');
+      } catch (error) {
+        console.error(error);
+        showToast('Could not seed demo data.');
+      }
+    }
+
+    async function clearAllCloudData() {
+      if (!db) return showToast('Cloud database is not ready yet.');
+      const confirmed = confirm('This will delete all cylinders and movement logs from the shared cloud database. Continue?');
+      if (!confirmed) return;
+
+      try {
+        const cylindersSnap = await getDocs(collection(db, 'cylinders'));
+        const movementsSnap = await getDocs(collection(db, 'movements'));
+        const batch = writeBatch(db);
+        cylindersSnap.forEach(record => batch.delete(record.ref));
+        movementsSnap.forEach(record => batch.delete(record.ref));
+        await batch.commit();
+        showToast('All cloud data cleared.');
+      } catch (error) {
+        console.error(error);
+        showToast('Could not clear cloud data.');
+      }
+    }
+
+    function subscribeToData() {
+      if (inventoryUnsub) inventoryUnsub();
+      if (movementUnsub) movementUnsub();
+
+      inventoryUnsub = onSnapshot(
+        query(collection(db, 'cylinders'), orderBy('id')),
+        snapshot => {
+          cylinders = snapshot.docs.map(docItem => ({ ...docItem.data() }));
+          refreshAll();
+          setCloudStatus('Connected', `${snapshot.size} live cylinder records loaded.`);
+        },
+        error => {
+          console.error(error);
+          setCloudStatus('Error', 'Could not read cylinders from Firestore.');
+        }
+      );
+
+      movementUnsub = onSnapshot(
+        query(collection(db, 'movements'), orderBy('createdAt', 'desc'), limit(50)),
+        snapshot => {
+          movementLog = snapshot.docs.map(docItem => ({ id: docItem.id, ...docItem.data() }));
+          renderMovementPreview();
+          renderMovementLog();
+        },
+        error => {
+          console.error(error);
+          showToast('Could not load movement log.');
+        }
+      );
+    }
+
+    async function initFirebase() {
+      if (!isConfigured()) {
+        setupCard.classList.add('show');
+        setCloudStatus('Setup Needed', 'Paste your Firebase config into the file first.');
+        return;
+      }
+
+      try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        setCloudStatus('Connecting', 'Signing in and opening live Firestore listeners...');
+
+        onAuthStateChanged(auth, user => {
+          if (!user) return;
+          currentUser = user;
+          userStatus.textContent = currentUserLabel();
+          userStatusNote.textContent = user.uid;
+          subscribeToData();
+        });
+
+        await signInAnonymously(auth);
+      } catch (error) {
+        console.error(error);
+        setCloudStatus('Error', 'Firebase setup failed. Check config, auth, and rules.');
+        userStatus.textContent = 'Error';
+        userStatusNote.textContent = error.message;
+      }
     }
 
     searchInput.addEventListener('input', renderInventory);
@@ -977,6 +1239,19 @@
 
     setupTabs();
     refreshAll();
+    initFirebase();
+
+    window.addCylinder = addCylinder;
+    window.checkOutCylinder = checkOutCylinder;
+    window.markFull = markFull;
+    window.markEmpty = markEmpty;
+    window.markReturnedEmpty = markReturnedEmpty;
+    window.receiveFullCylinders = receiveFullCylinders;
+    window.sendBatchForRefill = sendBatchForRefill;
+    window.transferBetweenLocations = transferBetweenLocations;
+    window.quarantineDamagedCylinder = quarantineDamagedCylinder;
+    window.seedDemoData = seedDemoData;
+    window.clearAllCloudData = clearAllCloudData;
   </script>
 </body>
 </html>
