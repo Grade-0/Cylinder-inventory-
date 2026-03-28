@@ -21,9 +21,7 @@
       --radius: 20px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -36,10 +34,7 @@
       min-height: 100%;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
     .container {
       max-width: 1400px;
@@ -113,6 +108,13 @@
       border-color: rgba(56, 189, 248, 0.35);
     }
 
+    .button.small {
+      padding: 10px 13px;
+      border-radius: 12px;
+      box-shadow: none;
+      font-size: 13px;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -165,13 +167,8 @@
       color: white;
     }
 
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
     .grid-2 {
       display: grid;
@@ -197,9 +194,7 @@
       margin: 0 0 18px;
     }
 
-    .stock-row {
-      margin-bottom: 18px;
-    }
+    .stock-row { margin-bottom: 18px; }
 
     .stock-top {
       display: flex;
@@ -276,9 +271,10 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.2fr 0.6fr 0.6fr;
+      grid-template-columns: 1.2fr 0.6fr 0.6fr auto;
       gap: 12px;
       margin-bottom: 16px;
+      align-items: center;
     }
 
     .input,
@@ -292,9 +288,7 @@
       outline: none;
     }
 
-    .input::placeholder {
-      color: #64748b;
-    }
+    .input::placeholder { color: #64748b; }
 
     .table-wrap {
       overflow-x: auto;
@@ -305,7 +299,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 960px;
+      min-width: 1160px;
     }
 
     thead {
@@ -318,11 +312,10 @@
       text-align: left;
       border-bottom: 1px solid rgba(148, 163, 184, 0.12);
       font-size: 14px;
+      vertical-align: top;
     }
 
-    tbody tr:hover {
-      background: rgba(30, 41, 59, 0.36);
-    }
+    tbody tr:hover { background: rgba(30, 41, 59, 0.36); }
 
     .status-pill {
       display: inline-flex;
@@ -357,44 +350,60 @@
       margin-top: 18px;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(15, 23, 42, 0.96);
+      color: white;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      min-width: 240px;
+      max-width: 360px;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 0.25s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     @media (max-width: 1100px) {
       .stats,
       .grid-2,
-      .grid-2-equal {
-        grid-template-columns: 1fr;
-      }
+      .grid-2-equal { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .toolbar { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 860px) {
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .toolbar,
+      .stats { grid-template-columns: repeat(2, 1fr); }
       .quick-actions,
-      .movement-item {
-        grid-template-columns: 1fr;
-      }
+      .movement-item { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
-      .container {
-        padding: 16px;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
-
-      .actions {
-        width: 100%;
-      }
-
-      .button {
-        width: 100%;
-      }
+      .container { padding: 16px; }
+      .stats { grid-template-columns: 1fr; }
+      .actions { width: 100%; }
+      .button { width: 100%; }
     }
   </style>
 </head>
@@ -410,8 +419,8 @@
       </div>
 
       <div class="actions">
-        <button class="button" onclick="showMessage('Check Out Cylinder')">Check Out Cylinder</button>
-        <button class="button primary" onclick="showMessage('Add Cylinder')">Add Cylinder</button>
+        <button class="button" onclick="checkOutCylinder()">Check Out Cylinder</button>
+        <button class="button primary" onclick="addCylinder()">Add Cylinder</button>
       </div>
     </div>
 
@@ -444,12 +453,12 @@
           <h2 class="section-title">Quick Actions</h2>
           <p class="section-desc">Common tasks for warehouse and delivery staff.</p>
           <div class="quick-actions">
-            <button class="button" onclick="showMessage('Receive full cylinders')">Receive full cylinders</button>
-            <button class="button" onclick="showMessage('Mark returned empty')">Mark returned empty</button>
-            <button class="button" onclick="showMessage('Send batch for refill')">Send batch for refill</button>
-            <button class="button" onclick="showMessage('Check out to customer')">Check out to customer</button>
-            <button class="button" onclick="showMessage('Transfer between locations')">Transfer between locations</button>
-            <button class="button" onclick="showMessage('Quarantine damaged cylinder')">Quarantine damaged cylinder</button>
+            <button class="button" onclick="receiveFullCylinders()">Receive full cylinders</button>
+            <button class="button" onclick="markReturnedEmpty()">Mark returned empty</button>
+            <button class="button" onclick="sendBatchForRefill()">Send batch for refill</button>
+            <button class="button" onclick="checkOutCylinder()">Check out to customer</button>
+            <button class="button" onclick="transferBetweenLocations()">Transfer between locations</button>
+            <button class="button" onclick="quarantineDamagedCylinder()">Quarantine damaged cylinder</button>
           </div>
         </div>
 
@@ -486,6 +495,7 @@
             <option value="In Transit">In Transit</option>
             <option value="Quarantined">Quarantined</option>
           </select>
+          <button class="button small" onclick="resetDemoData()">Reset Demo Data</button>
         </div>
 
         <div class="table-wrap">
@@ -501,12 +511,15 @@
                 <th>Last Fill</th>
                 <th>Inspection Due</th>
                 <th>Pressure</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="inventoryTable"></tbody>
           </table>
         </div>
-        <div class="footer-note">This demo uses sample data. Replace the JavaScript arrays with your real inventory records.</div>
+        <div class="footer-note">
+          This version now performs simple working actions inside the browser and saves changes with local storage. It does not use a real server or shared database yet.
+        </div>
       </div>
     </div>
 
@@ -523,45 +536,72 @@
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script>
-    const cylinders = [
-      { id: "OX-1001", gas: "Oxygen", size: "250cf", status: "Full", location: "Main Cage", owner: "In-House", lastFill: "2026-03-24", inspectionDue: "2026-07-10", assignedTo: "", pressure: "High" },
-      { id: "AR-2033", gas: "Argon", size: "125cf", status: "Empty", location: "Refill Area", owner: "Air Supply Co.", lastFill: "2026-03-09", inspectionDue: "2026-08-21", assignedTo: "", pressure: "Low" },
-      { id: "CO2-889", gas: "CO2", size: "20lb", status: "Full", location: "Warehouse Bay 2", owner: "In-House", lastFill: "2026-03-26", inspectionDue: "2026-09-03", assignedTo: "Bakery Dept.", pressure: "High" },
-      { id: "NI-5521", gas: "Nitrogen", size: "300cf", status: "In Transit", location: "Delivery Truck 1", owner: "In-House", lastFill: "2026-03-18", inspectionDue: "2026-06-14", assignedTo: "Plant A", pressure: "Medium" },
-      { id: "AC-7710", gas: "Acetylene", size: "150cf", status: "Quarantined", location: "Safety Hold", owner: "Vendor", lastFill: "2026-02-28", inspectionDue: "2026-04-01", assignedTo: "", pressure: "Unknown" },
-      { id: "PR-4402", gas: "Propane", size: "100lb", status: "Partial", location: "Truck Yard", owner: "In-House", lastFill: "2026-03-15", inspectionDue: "2026-10-11", assignedTo: "Crew 2", pressure: "Medium" },
-      { id: "HE-9944", gas: "Helium", size: "80cf", status: "Empty", location: "Return Staging", owner: "In-House", lastFill: "2026-03-01", inspectionDue: "2026-05-22", assignedTo: "Event Team", pressure: "Low" },
-      { id: "OX-1007", gas: "Oxygen", size: "250cf", status: "Full", location: "Main Cage", owner: "In-House", lastFill: "2026-03-25", inspectionDue: "2026-07-28", assignedTo: "Maintenance", pressure: "High" }
+    const STORAGE_KEYS = {
+      cylinders: 'gasCylinderInventory_cylinders',
+      movements: 'gasCylinderInventory_movements'
+    };
+
+    const defaultCylinders = [
+      { id: 'OX-1001', gas: 'Oxygen', size: '250cf', status: 'Full', location: 'Main Cage', owner: 'In-House', lastFill: '2026-03-24', inspectionDue: '2026-07-10', assignedTo: '', pressure: 'High' },
+      { id: 'AR-2033', gas: 'Argon', size: '125cf', status: 'Empty', location: 'Refill Area', owner: 'Air Supply Co.', lastFill: '2026-03-09', inspectionDue: '2026-08-21', assignedTo: '', pressure: 'Low' },
+      { id: 'CO2-889', gas: 'CO2', size: '20lb', status: 'Full', location: 'Warehouse Bay 2', owner: 'In-House', lastFill: '2026-03-26', inspectionDue: '2026-09-03', assignedTo: 'Bakery Dept.', pressure: 'High' },
+      { id: 'NI-5521', gas: 'Nitrogen', size: '300cf', status: 'In Transit', location: 'Delivery Truck 1', owner: 'In-House', lastFill: '2026-03-18', inspectionDue: '2026-06-14', assignedTo: 'Plant A', pressure: 'Medium' },
+      { id: 'AC-7710', gas: 'Acetylene', size: '150cf', status: 'Quarantined', location: 'Safety Hold', owner: 'Vendor', lastFill: '2026-02-28', inspectionDue: '2026-04-01', assignedTo: '', pressure: 'Unknown' },
+      { id: 'PR-4402', gas: 'Propane', size: '100lb', status: 'Partial', location: 'Truck Yard', owner: 'In-House', lastFill: '2026-03-15', inspectionDue: '2026-10-11', assignedTo: 'Crew 2', pressure: 'Medium' },
+      { id: 'HE-9944', gas: 'Helium', size: '80cf', status: 'Empty', location: 'Return Staging', owner: 'In-House', lastFill: '2026-03-01', inspectionDue: '2026-05-22', assignedTo: 'Event Team', pressure: 'Low' },
+      { id: 'OX-1007', gas: 'Oxygen', size: '250cf', status: 'Full', location: 'Main Cage', owner: 'In-House', lastFill: '2026-03-25', inspectionDue: '2026-07-28', assignedTo: 'Maintenance', pressure: 'High' }
     ];
 
-    const movementLog = [
-      { time: "08:14", action: "Checked Out", cylinder: "NI-5521", from: "Warehouse", to: "Delivery Truck 1", user: "J. Carter" },
-      { time: "09:02", action: "Marked Empty", cylinder: "HE-9944", from: "Event Team", to: "Return Staging", user: "A. Lewis" },
-      { time: "10:20", action: "Received Full", cylinder: "CO2-889", from: "Vendor", to: "Warehouse Bay 2", user: "R. Hall" },
-      { time: "11:11", action: "Quarantined", cylinder: "AC-7710", from: "Dock", to: "Safety Hold", user: "S. Grant" },
-      { time: "13:44", action: "Moved", cylinder: "AR-2033", from: "Return Staging", to: "Refill Area", user: "J. Carter" }
+    const defaultMovements = [
+      { time: '08:14', date: '2026-03-28', action: 'Checked Out', cylinder: 'NI-5521', from: 'Warehouse', to: 'Delivery Truck 1', user: 'J. Carter' },
+      { time: '09:02', date: '2026-03-28', action: 'Marked Empty', cylinder: 'HE-9944', from: 'Event Team', to: 'Return Staging', user: 'A. Lewis' },
+      { time: '10:20', date: '2026-03-28', action: 'Received Full', cylinder: 'CO2-889', from: 'Vendor', to: 'Warehouse Bay 2', user: 'R. Hall' },
+      { time: '11:11', date: '2026-03-28', action: 'Quarantined', cylinder: 'AC-7710', from: 'Dock', to: 'Safety Hold', user: 'S. Grant' },
+      { time: '13:44', date: '2026-03-28', action: 'Moved', cylinder: 'AR-2033', from: 'Return Staging', to: 'Refill Area', user: 'J. Carter' }
     ];
 
-    const stockByGas = [
-      { gas: "Oxygen", full: 12, empty: 4, min: 8 },
-      { gas: "Nitrogen", full: 7, empty: 2, min: 6 },
-      { gas: "Argon", full: 4, empty: 9, min: 6 },
-      { gas: "CO2", full: 9, empty: 3, min: 5 },
-      { gas: "Propane", full: 6, empty: 1, min: 4 }
-    ];
-
-    const alerts = [
-      { title: "Low full-stock", detail: "Argon is below minimum threshold (4 full / min 6).", severity: "warning" },
-      { title: "Inspection due soon", detail: "Acetylene cylinder AC-7710 inspection due on 2026-04-01.", severity: "danger" },
-      { title: "Refill queue", detail: "2 empty cylinders are waiting in Return Staging.", severity: "info" }
-    ];
+    let cylinders = loadData(STORAGE_KEYS.cylinders, defaultCylinders);
+    let movementLog = loadData(STORAGE_KEYS.movements, defaultMovements);
 
     const tabs = document.querySelectorAll('.tab-btn');
     const panels = document.querySelectorAll('.tab-panel');
     const searchInput = document.getElementById('searchInput');
     const gasFilter = document.getElementById('gasFilter');
     const statusFilter = document.getElementById('statusFilter');
+    const toast = document.getElementById('toast');
+
+    function loadData(key, fallback) {
+      const saved = localStorage.getItem(key);
+      if (!saved) return JSON.parse(JSON.stringify(fallback));
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return JSON.parse(JSON.stringify(fallback));
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEYS.cylinders, JSON.stringify(cylinders));
+      localStorage.setItem(STORAGE_KEYS.movements, JSON.stringify(movementLog));
+    }
+
+    function todayDate() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function currentTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
 
     function getStatusClass(status) {
       if (status === 'Full') return 'status-full';
@@ -569,6 +609,33 @@
       if (status === 'Empty') return 'status-empty';
       if (status === 'In Transit') return 'status-transit';
       return 'status-quarantined';
+    }
+
+    function logMovement(action, cylinderId, from, to, user = 'Local User') {
+      movementLog.unshift({
+        time: currentTime(),
+        date: todayDate(),
+        action,
+        cylinder: cylinderId,
+        from: from || '—',
+        to: to || '—',
+        user
+      });
+      movementLog = movementLog.slice(0, 50);
+    }
+
+    function getCylinderById(id) {
+      return cylinders.find(c => c.id.toLowerCase() === id.toLowerCase());
+    }
+
+    function refreshAll() {
+      saveData();
+      renderStats();
+      renderStockLevels();
+      renderAlertPreview();
+      renderMovementPreview();
+      renderMovementLog();
+      renderInventory();
     }
 
     function renderStats() {
@@ -594,9 +661,51 @@
       `).join('');
     }
 
+    function buildStockByGas() {
+      const mins = { Oxygen: 8, Nitrogen: 6, Argon: 6, CO2: 5, Propane: 4, Acetylene: 2, Helium: 2 };
+      const map = {};
+      cylinders.forEach(c => {
+        if (!map[c.gas]) map[c.gas] = { gas: c.gas, full: 0, empty: 0, min: mins[c.gas] || 3 };
+        if (c.status === 'Full') map[c.gas].full += 1;
+        if (c.status === 'Empty') map[c.gas].empty += 1;
+      });
+      return Object.values(map).sort((a, b) => a.gas.localeCompare(b.gas));
+    }
+
+    function buildAlerts() {
+      const stockAlerts = buildStockByGas()
+        .filter(item => item.full < item.min)
+        .map(item => ({
+          title: 'Low full-stock',
+          detail: `${item.gas} is below minimum threshold (${item.full} full / min ${item.min}).`,
+          severity: 'warning'
+        }));
+
+      const inspectionAlerts = cylinders
+        .filter(c => c.inspectionDue <= '2026-04-15')
+        .map(c => ({
+          title: 'Inspection due soon',
+          detail: `${c.gas} cylinder ${c.id} inspection due on ${c.inspectionDue}.`,
+          severity: 'danger'
+        }));
+
+      const refillCount = cylinders.filter(c => c.status === 'Empty').length;
+      const refillAlert = refillCount > 0
+        ? [{ title: 'Refill queue', detail: `${refillCount} empty cylinder${refillCount === 1 ? '' : 's'} waiting for refill or pickup.`, severity: 'info' }]
+        : [];
+
+      const quarantineCount = cylinders.filter(c => c.status === 'Quarantined').length;
+      const quarantineAlert = quarantineCount > 0
+        ? [{ title: 'Safety hold', detail: `${quarantineCount} cylinder${quarantineCount === 1 ? '' : 's'} currently quarantined.`, severity: 'danger' }]
+        : [];
+
+      return [...stockAlerts, ...inspectionAlerts, ...refillAlert, ...quarantineAlert].slice(0, 8);
+    }
+
     function renderStockLevels() {
+      const stockByGas = buildStockByGas();
       document.getElementById('stockLevels').innerHTML = stockByGas.map(item => {
-        const pct = Math.min(100, Math.round((item.full / item.min) * 100));
+        const pct = Math.min(100, Math.round((item.full / Math.max(item.min, 1)) * 100));
         const belowMin = item.full < item.min;
         return `
           <div class="stock-row">
@@ -610,25 +719,25 @@
             <div class="progress"><span style="width:${pct}%"></span></div>
           </div>
         `;
-      }).join('');
+      }).join('') || '<div class="stock-meta">No stock data available.</div>';
     }
 
     function renderAlertPreview() {
+      const alerts = buildAlerts();
       document.getElementById('alertPreview').innerHTML = alerts.map(alert => `
         <div class="alert-item">
           <div class="stock-name">${alert.title}</div>
           <div class="stock-meta">${alert.detail}</div>
         </div>
-      `).join('');
+      `).join('') || '<div class="alert-item"><div class="stock-meta">No active alerts.</div></div>';
 
       document.getElementById('allAlerts').innerHTML = alerts.map(alert => `
         <div class="card">
           <span class="badge ${alert.severity}">${alert.severity}</span>
           <h2 class="section-title" style="margin-top:12px;">${alert.title}</h2>
           <p class="section-desc">${alert.detail}</p>
-          <button class="button ${alert.severity === 'info' ? '' : 'primary'}" onclick="showMessage('${alert.title}')">View Details</button>
         </div>
-      `).join('');
+      `).join('') || '<div class="card"><div class="section-desc">No active alerts.</div></div>';
     }
 
     function renderMovementPreview() {
@@ -643,7 +752,7 @@
             <div>${log.user}</div>
           </div>
         </div>
-      `).join('');
+      `).join('') || '<div class="movement-item"><div class="movement-meta">No recent activity.</div></div>';
     }
 
     function renderMovementLog() {
@@ -657,7 +766,7 @@
           <div class="movement-meta">${log.user}</div>
           <span class="badge info">${log.time}</span>
         </div>
-      `).join('');
+      `).join('') || '<div class="movement-item"><div class="movement-meta">No logged movements yet.</div></div>';
     }
 
     function renderInventory() {
@@ -684,10 +793,17 @@
           <td>${c.lastFill}</td>
           <td>${c.inspectionDue}</td>
           <td>${c.pressure}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="button small" onclick="markFull('${c.id}')">Mark Full</button>
+              <button class="button small" onclick="markEmpty('${c.id}')">Mark Empty</button>
+              <button class="button small" onclick="checkOutCylinder('${c.id}')">Check Out</button>
+            </div>
+          </td>
         </tr>
       `).join('') || `
         <tr>
-          <td colspan="9" style="text-align:center; color: var(--muted); padding: 22px;">No cylinders match your search.</td>
+          <td colspan="10" style="text-align:center; color: var(--muted); padding: 22px;">No cylinders match your search.</td>
         </tr>
       `;
     }
@@ -703,21 +819,164 @@
       });
     }
 
-    function showMessage(action) {
-      alert(action + ' action clicked. Connect this button to your real workflow later.');
+    function addCylinder() {
+      const id = prompt('Cylinder ID? Example: OX-1010');
+      if (!id) return;
+      if (getCylinderById(id)) {
+        showToast('That cylinder ID already exists.');
+        return;
+      }
+      const gas = prompt('Gas type? Example: Oxygen, Nitrogen, Argon, CO2') || 'Unknown';
+      const size = prompt('Cylinder size? Example: 250cf or 20lb') || 'Unknown';
+      const location = prompt('Current location?') || 'Main Cage';
+      const inspectionDue = prompt('Inspection due date? Use YYYY-MM-DD') || todayDate();
+
+      cylinders.unshift({
+        id,
+        gas,
+        size,
+        status: 'Full',
+        location,
+        owner: 'In-House',
+        lastFill: todayDate(),
+        inspectionDue,
+        assignedTo: '',
+        pressure: 'High'
+      });
+      logMovement('Added', id, '—', location);
+      refreshAll();
+      showToast(`Cylinder ${id} added.`);
+    }
+
+    function checkOutCylinder(preselectedId) {
+      const id = preselectedId || prompt('Enter the cylinder ID to check out:');
+      if (!id) return;
+      const cylinder = getCylinderById(id);
+      if (!cylinder) {
+        showToast('Cylinder not found.');
+        return;
+      }
+      const assignedTo = prompt('Assign to customer / department / truck:', cylinder.assignedTo || '');
+      if (assignedTo === null) return;
+      const newLocation = prompt('New location for this checkout:', cylinder.location || 'Delivery Truck 1');
+      if (newLocation === null) return;
+      const from = cylinder.location;
+      cylinder.assignedTo = assignedTo;
+      cylinder.location = newLocation;
+      cylinder.status = 'In Transit';
+      cylinder.pressure = cylinder.status === 'Empty' ? 'Low' : cylinder.pressure;
+      logMovement('Checked Out', cylinder.id, from, newLocation);
+      refreshAll();
+      showToast(`Cylinder ${cylinder.id} checked out.`);
+    }
+
+    function markEmpty(id) {
+      const cylinder = getCylinderById(id);
+      if (!cylinder) return showToast('Cylinder not found.');
+      const from = cylinder.location;
+      cylinder.status = 'Empty';
+      cylinder.pressure = 'Low';
+      cylinder.location = 'Return Staging';
+      logMovement('Marked Empty', cylinder.id, from, cylinder.location);
+      refreshAll();
+      showToast(`${cylinder.id} marked empty.`);
+    }
+
+    function markFull(id) {
+      const cylinder = getCylinderById(id);
+      if (!cylinder) return showToast('Cylinder not found.');
+      const from = cylinder.location;
+      cylinder.status = 'Full';
+      cylinder.pressure = 'High';
+      cylinder.location = 'Main Cage';
+      cylinder.lastFill = todayDate();
+      cylinder.assignedTo = '';
+      logMovement('Marked Full', cylinder.id, from, cylinder.location);
+      refreshAll();
+      showToast(`${cylinder.id} marked full.`);
+    }
+
+    function markReturnedEmpty() {
+      const id = prompt('Cylinder ID to mark as returned empty:');
+      if (!id) return;
+      markEmpty(id);
+    }
+
+    function receiveFullCylinders() {
+      const id = prompt('Cylinder ID received as full:');
+      if (!id) return;
+      const cylinder = getCylinderById(id);
+      if (!cylinder) {
+        const createNew = confirm('Cylinder not found. Add it as a new cylinder?');
+        if (createNew) addCylinder();
+        return;
+      }
+      markFull(id);
+    }
+
+    function sendBatchForRefill() {
+      const empties = cylinders.filter(c => c.status === 'Empty');
+      if (empties.length === 0) {
+        showToast('No empty cylinders available for refill.');
+        return;
+      }
+      empties.forEach(cylinder => {
+        const from = cylinder.location;
+        cylinder.location = 'Refill Area';
+        logMovement('Sent For Refill', cylinder.id, from, cylinder.location);
+      });
+      refreshAll();
+      showToast(`${empties.length} empty cylinders sent for refill.`);
+    }
+
+    function transferBetweenLocations() {
+      const id = prompt('Cylinder ID to transfer:');
+      if (!id) return;
+      const cylinder = getCylinderById(id);
+      if (!cylinder) {
+        showToast('Cylinder not found.');
+        return;
+      }
+      const newLocation = prompt('Move cylinder to which location?', cylinder.location);
+      if (!newLocation) return;
+      const from = cylinder.location;
+      cylinder.location = newLocation;
+      logMovement('Moved', cylinder.id, from, newLocation);
+      refreshAll();
+      showToast(`${cylinder.id} moved to ${newLocation}.`);
+    }
+
+    function quarantineDamagedCylinder() {
+      const id = prompt('Cylinder ID to quarantine:');
+      if (!id) return;
+      const cylinder = getCylinderById(id);
+      if (!cylinder) {
+        showToast('Cylinder not found.');
+        return;
+      }
+      const from = cylinder.location;
+      cylinder.status = 'Quarantined';
+      cylinder.location = 'Safety Hold';
+      cylinder.pressure = 'Unknown';
+      logMovement('Quarantined', cylinder.id, from, cylinder.location);
+      refreshAll();
+      showToast(`${cylinder.id} moved to safety hold.`);
+    }
+
+    function resetDemoData() {
+      if (!confirm('Reset all saved changes and restore the original demo data?')) return;
+      cylinders = JSON.parse(JSON.stringify(defaultCylinders));
+      movementLog = JSON.parse(JSON.stringify(defaultMovements));
+      refreshAll();
+      showToast('Demo data reset.');
     }
 
     searchInput.addEventListener('input', renderInventory);
     gasFilter.addEventListener('change', renderInventory);
     statusFilter.addEventListener('change', renderInventory);
 
-    renderStats();
-    renderStockLevels();
-    renderAlertPreview();
-    renderMovementPreview();
-    renderMovementLog();
-    renderInventory();
     setupTabs();
+    refreshAll();
   </script>
 </body>
 </html>
